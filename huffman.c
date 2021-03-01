@@ -5,7 +5,6 @@
 void compression(FILE *input, FILE *output)  {
 	int i;
 	read_bit_buffer input_buffer;
-	int bit;
 	write_bit_buffer compressed_buffer;
 	int counting_bin[256];
 
@@ -42,7 +41,7 @@ void compression(FILE *input, FILE *output)  {
 		// printf("First Char: %d\n", new_node->left->c);
 		HeapInsert('~', new_node, min1.freq + min2.freq);
 	}
-	// heapPrint();
+	heapPrint();
 
 	huffman_tree_node *main_huff_node;
 	main_huff_node = DeleteMin().t;
@@ -108,6 +107,15 @@ void decompression(FILE *input, FILE *output)  {
  while ((bit = bitbuf_read_bit(&input_buffer)) != -1) {
 	 printf("%d", bit);
  }
+
+ reset_bitbuff_reader(&input_buffer);
+
+ decompress_header(&input_buffer);
+ // printf("Huffman Tree: %c\n", huffman_tree->c);
+ // printf("Left: %c\n", huffman_tree->left->c);
+ // printf("Right: %c\n", huffman_tree->right->c);
+
+ decompress_remaining_file(&input_buffer, output);
 
  printf("\n\n");
 
