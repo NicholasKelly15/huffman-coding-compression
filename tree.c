@@ -110,7 +110,7 @@ char huffman_code[256][20];
  when this is written, the following 8 bits are the ascii representation
  of the character at that outer node.
  */
- void add_huffman_bits_at_node(huffman_tree_node *top_node, write_bit_buffer *compressed_buffer) {
+ static void add_huffman_bits_at_node(huffman_tree_node *top_node, write_bit_buffer *compressed_buffer) {
      if (top_node->left == NULL) {
          // The node is an outer node, write 1 and the character.
          bitbuf_write_bit(compressed_buffer, 1);
@@ -130,4 +130,46 @@ char huffman_code[256][20];
 
  void make_header_with_tree(write_bit_buffer *compressed_buffer) {
      add_huffman_bits_at_node(huffman_tree, compressed_buffer);
+ }
+
+ static huffman_tree_node *decompress_header_at_node(read_bit_buffer *reader) {
+     int type = bitbuf_read_bit(reader);
+     if (type == 0) {
+         printf("0, down a level\n");
+         // Make inner node and use recursion to finish the tree at the node
+         huffman_tree_node *new_tree_node = (huffman_tree_node *) malloc(sizeof(huffman_tree_node));
+         new_tree_node->left = decompress_header_at_node(reader);
+         new_tree_node->right = decompress_header_at_node(reader);
+         new_tree_node->c = '~';
+         return new_tree_node;
+     } else if (type == 1) {
+         printf("1, the char is: ");
+         // Make outer node and return a pointer to the node
+         huffman_tree_node *new_tree_node = (huffman_tree_node *) malloc(sizeof(huffman_tree_node));
+         unsigned char node_char = 0;
+         for (int i = 0 ; i < 8 ; i++) {
+             node_char = node_char >> 1;
+             int bit = bitbuf_read_bit(reader);
+             node_char += (128 * bit);
+             // printf("%d\n", node_char);
+             // printf("%d", bit);
+         }
+         // printf("\n");
+         printf("%d\n", node_char);
+         new_tree_node->c = node_char;
+         new_tree_node->left = NULL;
+         new_tree_node->right = NULL;
+         return new_tree_node;
+     } else {
+         printf("Huh?");
+         return NULL;
+     }
+ }
+
+ void decompress_header(read_bit_buffer *reader) {
+     huffman_tree = decompress_header_at_node(reader);
+ }
+
+ void decompress_remaining_file(read_bit_buffer *reader, FILE *out_file) {
+     fputc('t', out_file);
  }
