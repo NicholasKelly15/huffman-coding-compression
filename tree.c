@@ -170,6 +170,27 @@ char huffman_code[256][20];
      huffman_tree = decompress_header_at_node(reader);
  }
 
+ static char decompress_next_character(read_bit_buffer *reader) {
+     huffman_tree_node *iterator = huffman_tree;
+     while (1) {
+         int next_bit = bitbuf_read_bit(reader);
+         if (next_bit == 0) {
+             iterator = iterator->left;
+         } else {
+             iterator = iterator->right;
+         }
+
+         if (iterator->left == NULL && iterator->right == NULL) {
+             return iterator->c;
+         }
+     }
+ }
+
  void decompress_remaining_file(read_bit_buffer *reader, FILE *out_file) {
-     fputc('t', out_file);
+     // fputc('t', out_file);
+     char next_char;
+     while ((next_char = decompress_next_character(reader)) != 0) {
+         printf("Char: %d\n", next_char);
+         fputc(next_char, out_file);
+     }
  }

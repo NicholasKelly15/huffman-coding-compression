@@ -110,19 +110,19 @@ HeapNode DeleteMin() {
 }
 
 void heapPrint()  {
-    int  i;
-    printf("Heap\n---------------\n");
-    for (i = 1; i <= heapSize; i++) {
-        printf("%d ", heap[i].c);
-    	if(isprint(heap[i].c)) {
-            printf("(%c) ", heap[i].c);
-            printf("%d\n", heap[i].freq);
-        } else {
-            printf("(-) ");
-            printf("%d\n", heap[i].freq);
-        }
-    }
-    printf("----------------\n");
+    // int  i;
+    // printf("Heap\n---------------\n");
+    // for (i = 1; i <= heapSize; i++) {
+    //     printf("%d ", heap[i].c);
+    // 	if(isprint(heap[i].c)) {
+    //         printf("(%c) ", heap[i].c);
+    //         printf("%d\n", heap[i].freq);
+    //     } else {
+    //         printf("(-) ");
+    //         printf("%d\n", heap[i].freq);
+    //     }
+    // }
+    // printf("----------------\n");
 }
 
 
