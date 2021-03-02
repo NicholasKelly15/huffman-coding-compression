@@ -25,8 +25,6 @@ void compression(FILE *input, FILE *output)  {
 
 	HeapInsert(0, NULL, 1);   // Insert end of file marker
 
-	/** Insert your code here for creating Huffman code and compress the file **/
-
 	HeapNode min1;
 	HeapNode min2;
 	HeapNode *min1_ptr;
@@ -37,8 +35,6 @@ void compression(FILE *input, FILE *output)  {
 		min1_ptr = &min1;
 		min2_ptr = &min2;
 		huffman_tree_node *new_node = merge_nodes(min1_ptr, min2_ptr);
-		// printf("Char: %d\n", new_node->c);
-		// printf("First Char: %d\n", new_node->left->c);
 		HeapInsert('~', new_node, min1.freq + min2.freq);
 	}
 	heapPrint();
@@ -46,18 +42,8 @@ void compression(FILE *input, FILE *output)  {
 	huffman_tree_node *main_huff_node;
 	main_huff_node = DeleteMin().t;
 	set_huffman_tree_top_node(main_huff_node);
-	// printf("Set Main Huff Node!!!\n");
 
 	make_huffman_table();
-
-	for (int i = 0 ; i < 256 ; i++) {
-		printf("At %d encoding: ", i);
-		for (int j = 0 ; j < 20 && huffman_code[i][j] != -1 ; j++) {
-			printf("%d ", huffman_code[i][j]);
-		}
-		printf("\n");
-	}
-
 
 	// Adding the header to the file (huffman tree)
 	make_header_with_tree(&compressed_buffer);
@@ -76,14 +62,12 @@ void compression(FILE *input, FILE *output)  {
 			for (int encoded_bit = 0 ; encoded_bit < 20
 				&& huffman_code[next_char][encoded_bit] != -1 ; encoded_bit++) {
 				bitbuf_write_bit(&compressed_buffer, huffman_code[next_char][encoded_bit]);
-				printf("%d", huffman_code[next_char][encoded_bit]);
 			}
 		}
 	}
 	// Adding the EOF character
-	for (int i = 0 ; i < 20 && huffman_code[0][i] != -1 ; i++) {
+	for (i = 0 ; i < 20 && huffman_code[0][i] != -1 ; i++) {
 		bitbuf_write_bit(&compressed_buffer, huffman_code[0][i]);
-		printf("%d", huffman_code[0][i]);
 	}
 
 	bitbuf_store_final(output, &compressed_buffer);
@@ -94,27 +78,10 @@ void compression(FILE *input, FILE *output)  {
 
 void decompression(FILE *input, FILE *output)  {
 
- /*****************************************
- *                                        *
- *   Enter your code for huffman coding   *
- *                                        *
- ******************************************/
-
  read_bit_buffer input_buffer;
  bitbuf_load(input, &input_buffer);
- int bit;
-
- while ((bit = bitbuf_read_bit(&input_buffer)) != -1) {
-	 printf("%d", bit);
- }
-
- reset_bitbuff_reader(&input_buffer);
 
  decompress_header(&input_buffer);
- // printf("Huffman Tree: %c\n", huffman_tree->c);
- // printf("Left: %c\n", huffman_tree->left->c);
- // printf("Right: %c\n", huffman_tree->right->c);
-
  decompress_remaining_file(&input_buffer, output);
 
  printf("\n\n");

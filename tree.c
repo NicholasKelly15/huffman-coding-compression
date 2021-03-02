@@ -16,7 +16,6 @@ char huffman_code[256][20];
  huffman_tree_node *merge_nodes(HeapNode *one, HeapNode *two) {
      // Add a huffman node to the heap nodes if they don't have one already.
      if (one->t == NULL) {
-         // printf("True1\n");
          huffman_tree_node *one_huff_node = (huffman_tree_node *) malloc(sizeof(huffman_tree_node));
          one_huff_node->freq = one->freq;
          one_huff_node->c = one->c;
@@ -25,7 +24,6 @@ char huffman_code[256][20];
          one->t = one_huff_node;
      }
      if (two->t == NULL) {
-         // printf("True2\n");
          huffman_tree_node *two_huff_node = (huffman_tree_node *) malloc(sizeof(huffman_tree_node));
          two_huff_node->freq = two->freq;
          two_huff_node->c = two->c;
@@ -36,7 +34,6 @@ char huffman_code[256][20];
 
      // Make the huffman tree node and add data
      huffman_tree_node *new_tree_node = (huffman_tree_node *) malloc(sizeof(huffman_tree_node));
-     // printf("Reference: %p\n", new_tree_node);
      new_tree_node->freq = one->freq + two->freq;
      new_tree_node->left = one->t;
      new_tree_node->right = two->t;
@@ -54,14 +51,12 @@ char huffman_code[256][20];
          for (int i = 0 ; i < 20 ; i++) {
              huffman_code[(unsigned char) top_node->c][i] = current_encoding[i];
          }
-         // printf("stopping here: %s\n\n", current_encoding);
      } else {
          char next_encoding_left[20];
          for (int i = 0 ; i < 20 ; i++) {
              next_encoding_left[i] = current_encoding[i];
          }
          next_encoding_left[current_size] = 0;
-         // next_encoding_left[strlen(current_encoding)] = 0;
 
          char next_encoding_right[20];
          for (int i = 0 ; i < 20 ; i++) {
@@ -69,15 +64,7 @@ char huffman_code[256][20];
          }
          next_encoding_right[current_size] = 1;
 
-         // printf("Current Encoding: ");
-         // for (int i = 0 ; i < 20 ; i++) {
-         //     printf("%d ", current_encoding[i]);
-         // }
-         // printf("\n");
-
-         // printf("going left\n");
          make_huffman_table_at_node(top_node->left, next_encoding_left, current_size + 1);
-         // printf("going right\n");
          make_huffman_table_at_node(top_node->right, next_encoding_right, current_size + 1);
      }
  }
@@ -98,8 +85,6 @@ char huffman_code[256][20];
          start_encoding[i] = -1;
      }
 
-
-     // printf("Left Node: %d\n", traversal_node->left->freq);
      make_huffman_table_at_node(traversal_node, start_encoding, 0);
  }
 
@@ -116,7 +101,6 @@ char huffman_code[256][20];
          bitbuf_write_bit(compressed_buffer, 1);
          int bit_mask = 1;
          for (int i = 0 ; i < 8 ; i++) {
-             printf("Adding char\n");
              bitbuf_write_bit(compressed_buffer, (top_node->c & bit_mask) == (1 << i));
              bit_mask = bit_mask << 1;
          }
@@ -135,7 +119,6 @@ char huffman_code[256][20];
  static huffman_tree_node *decompress_header_at_node(read_bit_buffer *reader) {
      int type = bitbuf_read_bit(reader);
      if (type == 0) {
-         printf("0, down a level\n");
          // Make inner node and use recursion to finish the tree at the node
          huffman_tree_node *new_tree_node = (huffman_tree_node *) malloc(sizeof(huffman_tree_node));
          new_tree_node->left = decompress_header_at_node(reader);
@@ -143,7 +126,6 @@ char huffman_code[256][20];
          new_tree_node->c = '~';
          return new_tree_node;
      } else if (type == 1) {
-         printf("1, the char is: ");
          // Make outer node and return a pointer to the node
          huffman_tree_node *new_tree_node = (huffman_tree_node *) malloc(sizeof(huffman_tree_node));
          unsigned char node_char = 0;
@@ -151,11 +133,7 @@ char huffman_code[256][20];
              node_char = node_char >> 1;
              int bit = bitbuf_read_bit(reader);
              node_char += (128 * bit);
-             // printf("%d\n", node_char);
-             // printf("%d", bit);
          }
-         // printf("\n");
-         printf("%d\n", node_char);
          new_tree_node->c = node_char;
          new_tree_node->left = NULL;
          new_tree_node->right = NULL;
@@ -187,10 +165,8 @@ char huffman_code[256][20];
  }
 
  void decompress_remaining_file(read_bit_buffer *reader, FILE *out_file) {
-     // fputc('t', out_file);
      char next_char;
      while ((next_char = decompress_next_character(reader)) != 0) {
-         printf("Char: %d\n", next_char);
          fputc(next_char, out_file);
      }
  }
