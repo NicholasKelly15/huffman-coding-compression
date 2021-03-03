@@ -27,7 +27,6 @@ extern char huffman_code[256][20];
 huffman_tree_node *merge_nodes(HeapNode *one, HeapNode *two);
 void create_huffman_tree_from_frequencies();
 void make_huffman_table();
-// static void add_huffman_bits_at_node(huffman_tree_node *top_node, write_bit_buffer *compressed_buffer);
 void make_header_with_tree(write_bit_buffer *compressed_buffer);
 void decompress_header(read_bit_buffer *reader);
 void decompress_remaining_file(read_bit_buffer *reader, FILE *out_file);
