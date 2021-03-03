@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "heap.h"
 #include "bit_buf.h"
 #include "tree.h"
@@ -36,24 +38,22 @@ void compression(FILE *input, FILE *output)  {
 	for(i = 0; i < 256; i++)
 		if(counting_bin[i])
 			HeapInsert(i, NULL, counting_bin[i]);
+	HeapInsert(0, NULL, 1);   // Insert end of file marker to the heap
 
-	HeapInsert(0, NULL, 1);   // Insert end of file marker
-
+	// Takes the frequencies and builds the huffman tree
 	create_huffman_tree_from_frequencies();
-
+	// Takes the huffman tree and builds the encoding table
 	make_huffman_table();
-
 	// Adding the header to the file (huffman tree)
 	make_header_with_tree(&compressed_buffer);
 
-
 	// Adding the compressed bits to the file
-	reset_bitbuff_reader(&input_buffer);
 	input_buffer.buffer[input_buffer.last_index] = 0; // Add EOF char to buffer
 	input_buffer.last_index++; // Increment last index
 	unsigned char next_char = 0;
 	int encoded_bit;
-
+	// Loop through the buffer, compress the characters, and add them
+	// to the new file.
 	for (i = 0 ; i < input_buffer.last_index ; i++) {
 		next_char = input_buffer.buffer[i];
 		for (encoded_bit = 0 ; encoded_bit < 20
@@ -62,6 +62,7 @@ void compression(FILE *input, FILE *output)  {
 		}
 	}
 
+	// Store the buffer into the output file.
 	bitbuf_store_final(output, &compressed_buffer);
 
 }
@@ -108,7 +109,12 @@ int main(int argc, char **argv)   {
                 return -1;
         }
 
-        in_file = fopen(argv[2], "rb");
+        in_file = fopen(argv[2], "r");
+		fseek(in_file, 0L, SEEK_END);
+		int in_file_size = ftell(in_file);
+		fclose(in_file);
+
+		in_file = fopen(argv[2], "rb");
         out_file = fopen(argv[3], "wb");
 
         if(!in_file || !out_file)   {
@@ -118,12 +124,29 @@ int main(int argc, char **argv)   {
 
 	if(argv[1][1] == 'c')  {
 		printf("Compress %s and store to %s\n", argv[2], argv[3]);
-		compression(in_file, out_file);
+
+		// Checking to make sure the file is not empty, prevents problems
+		if (in_file_size == 0) {
+			printf("\nWhy are you compressing an empty file???\n");
+			printf("Compressing as a new empty file :)\nEnjoy\n");
+			fclose(out_file);
+		} else {
+			compression(in_file, out_file);
+		}
+
 	}
 
 	if(argv[1][1] == 'd')  {
 		printf("Decompress %s and store to %s\n", argv[2], argv[3]);
-		decompression(in_file, out_file);
+
+		// Checking to make sure the file is not empty, prevents problems
+		if (in_file_size == 0) {
+			printf("\nDecompressing your empty file?!?!\n");
+			fclose(out_file);
+		} else {
+			decompression(in_file, out_file);
+		}
+
 	}
 
         fclose(in_file);
