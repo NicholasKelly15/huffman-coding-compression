@@ -2,6 +2,20 @@
 #include "bit_buf.h"
 #include "tree.h"
 
+/****************************************************************************************
+// Compression function, runs when the argument -c is used with huffman.
+// First counts the character frequencies of the file, then builds a huffman
+// table based on the requencies which are inserted into a heap. The huffman
+// tree is used to make a table that takes characters and outputs an encoding.
+// The encoding table is then used to encode the input file and the results are
+// printed into the output file.
+
+// Args:
+// FILE *input: pointer to input file to encode
+// FILE *output: pointer to output file for the compressed file
+
+// Return: void
+*****************************************************************************************/
 void compression(FILE *input, FILE *output)  {
 	int i;
 	read_bit_buffer input_buffer;
@@ -72,19 +86,30 @@ void compression(FILE *input, FILE *output)  {
 
 	bitbuf_store_final(output, &compressed_buffer);
 
-	printf("\n\n");
-
 }
 
+/****************************************************************************************
+// Decompression, runs when the arg -d is used with huffman.
+// Builds a huffman tree based on the input file header and then
+// uses the huffman tree to decode the rest of the file and return the
+// characters into the output file.
+
+// Args:
+// FILE *input: pointer to the file to decode
+// FILE *output: pointer to the file to return the decompressed data
+
+// Return: void
+*****************************************************************************************/
 void decompression(FILE *input, FILE *output)  {
 
- read_bit_buffer input_buffer;
- bitbuf_load(input, &input_buffer);
+	// Make buffer to read the file.
+	read_bit_buffer input_buffer;
+ 	bitbuf_load(input, &input_buffer);
 
- decompress_header(&input_buffer);
- decompress_remaining_file(&input_buffer, output);
-
- printf("\n\n");
+	// Build huffman tree from header.
+	decompress_header(&input_buffer);
+	// Decode the file with the huffman tree.
+	decompress_remaining_file(&input_buffer, output);
 
 }
 

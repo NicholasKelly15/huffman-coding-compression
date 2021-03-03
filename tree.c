@@ -7,13 +7,21 @@
 huffman_tree_node *huffman_tree;
 char huffman_code[256][20];
 
-/******************************************
- *                                        *
- *   Enter your code for huffman coding   *
- *                                        *
- ******************************************/
+/****************************************************************************************
+// Function used to help build the huffman tree. Takes 2 Heap_Node's as arguments,
+// finds the huffman nodes that each heap node points to (creates one if the heap
+// node does not have a huffman node), and makes a new huffman_tree_node that
+// points to the 2 nodes that were merged. This new huffman_tree_node is returned
+// as a pointer. By popping min from the heap, merging the nodes, and pushing
+// them back to the heap, a huffman tree can be created.
 
- huffman_tree_node *merge_nodes(HeapNode *one, HeapNode *two) {
+// Args:
+// HeapNode *one: First HeapNode popped from the heap
+// HeapNode *two: Second HeapNode popped from the heap
+
+// Return: huffman_tree_node *: New tree pointer created from smaller trees
+*****************************************************************************************/
+huffman_tree_node *merge_nodes(HeapNode *one, HeapNode *two) {
      // Add a huffman node to the heap nodes if they don't have one already.
      if (one->t == NULL) {
          huffman_tree_node *one_huff_node = (huffman_tree_node *) malloc(sizeof(huffman_tree_node));
@@ -37,7 +45,7 @@ char huffman_code[256][20];
      new_tree_node->freq = one->freq + two->freq;
      new_tree_node->left = one->t;
      new_tree_node->right = two->t;
-     new_tree_node->c = 9;
+     new_tree_node->c = '~';
 
      return new_tree_node;
  }
