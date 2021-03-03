@@ -2,9 +2,9 @@
 
 ## Table of Contents
 * [General Information](#general-information)
-* [Setup](setup)
-* [Running](running)
-* [Status](status)
+* [Setup](#setup)
+* [Running](#running)
+* [Status](#status)
 
 ## General Information
 
