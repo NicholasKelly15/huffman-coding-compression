@@ -50,8 +50,20 @@ huffman_tree_node *merge_nodes(HeapNode *one, HeapNode *two) {
      return new_tree_node;
  }
 
- void set_huffman_tree_top_node(huffman_tree_node *node) {
-     huffman_tree = node;
+ void create_huffman_tree_from_frequencies() {
+    HeapNode min1;
+ 	HeapNode min2;
+ 	HeapNode *min1_ptr;
+ 	HeapNode *min2_ptr;
+ 	while (heapSize > 1) {
+ 		min1 = DeleteMin();
+ 		min2 = DeleteMin();
+ 		min1_ptr = &min1;
+ 		min2_ptr = &min2;
+ 		huffman_tree_node *new_node = merge_nodes(min1_ptr, min2_ptr);
+ 		HeapInsert('~', new_node, min1.freq + min2.freq);
+ 	}
+	huffman_tree = DeleteMin().t;
  }
 
  void make_huffman_table_at_node(huffman_tree_node *top_node, char current_encoding[], int current_size) {
