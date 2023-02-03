@@ -21,8 +21,8 @@ make clean
 ## Running
 To compress a file, navigate to the folder where the executable lies in the terminal. Use the following to compress or decompress a file.
 ```
-huffman -c start_file compressed_file
-huffman -d compressed_file decompressed_file
+huffman -c uncompressed_file_name compressed_file_name
+huffman -d compressed_file_name uncompressed_file_name
 ```
 
 ## Limitations
