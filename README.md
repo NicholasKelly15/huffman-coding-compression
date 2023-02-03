@@ -1,4 +1,4 @@
-# CSCI 2021: Project 1, Huffman Coding
+# Huffman Coding Compression Algorithm
 
 ## Table of Contents
 * [General Information](#general-information)
