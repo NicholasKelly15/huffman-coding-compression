@@ -26,4 +26,4 @@ huffman -d compressed_file_name uncompressed_file_name
 ```
 
 ## Limitations
-The compression algorithm currently only works with files that have a size up to 1,000,000 bytes (1 MB). It works with any file type, although there are no guarantees the end file will actually be smaller than the starting file (expansion may occur for very small file sizes or incredibly evenly distributed files).
+The compression algorithm currently only works with files that have a size up to 1,000,000 bytes (1 MB). In theory it could work for other file types, but it has only been tested on text files. There are also no guarantees the end file will actually be smaller than the starting file (expansion may occur for very small file sizes or evenly distributed files).
